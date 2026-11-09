@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduTrack | SAU Attendance & Student ID Portal</title>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-dark: #0f172a;
+            --sidebar-bg: #1e1b4b;
+            --brand-violet: #6366f1;
+            --brand-hover: #4f46e5;
+            --brand-light: #e0e7ff;
+            --bg-main: #f8fafc;
+            --bg-card: #ffffff;
+            --text-color: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --sidebar-width: 260px;
+            --success-color: #10b981;
+            --success-bg: #d1fae5;
+            --danger-color: #ef4444;
+            --danger-bg: #fee2e2;
+            --warning-color: #f59e0b;
+            --warning-bg: #fef3c7;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-color);
+        }
+
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--sidebar-bg);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .brand i {
+            color: #818cf8;
+            font-size: 2rem;
+        }
+
+        .brand-text h2 {
+            font-size: 1.3rem;
+            color: #ffffff;
+            line-height: 1.1;
+            font-weight: 700;
+        }
+
+        .brand-text p {
+            font-size: 0.72rem;
+            color: #a5b4fc;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 2rem;
+        }
+
+        .nav-item {
+            color: #c7d2fe;
+            text-decoration: none;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background-color: var(--brand-violet);
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .sidebar-footer {
+            font-size: 0.8rem;
+            color: #818cf8;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 1rem;
+        }
+
+        /* Main Content Area */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        .top-header {
+            background: var(--bg-card);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #f1f5f9;
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            width: 340px;
+            border: 1px solid var(--border-color);
+        }
+
+        .search-box input {
+            border: none;
+            background: transparent;
+            outline: none;
+            width: 100%;
+            font-size: 0.9rem;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-left: auto;
+        }
+
+        .avatar-container {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--brand-violet);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+            box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--text-color);
+        }
+
+        .user-role {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* Tab Content Control */
+        .tab-content {
+            display: none;
+            padding: 2rem;
+        }
+
+        .tab-content.active-tab {
+            display: block;
+        }
+
+        .page-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.75rem;
+        }
+
+        .page-title h1 {
+            font-size: 1.6rem;
+            color: var(--primary-dark);
+            font-weight: 700;
+        }
+
+        /* Buttons */
+        .btn {
+            border: none;
+            padding: 0.65rem 1.3rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--brand-violet);
+            color: white;
+        }
+        .btn-primary:hover { background-color: var(--brand-hover); }
+
+        .btn-secondary {
+            background-color: #64748b;
+            color: white;
+        }
+        .btn-secondary:hover { background-color: #475569; }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--brand-violet);
+            color: var(--brand-violet);
+        }
+        .btn-outline:hover { background: var(--brand-violet); color: #fff; }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            padding: 1.5rem;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .stat-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            color: white;
+        }
+
+        .bg-indigo { background: #6366f1; }
+        .bg-emerald { background: #10b981; }
+        .bg-rose { background: #f43f5e; }
+        .bg-amber { background: #f59e0b; }
+
+        .stat-info h3 { font-size: 1.6rem; font-weight: 700; }
+        .stat-info p { color: var(--text-muted); font-size: 0.85rem; font-weight: 500; }
+
+        /* Attendance Overview Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 1024px) {
+            .dashboard-grid { grid-template-columns: 1fr; }
+        }
+
+        /* ID Card Preview Component */
+        .id-card-preview {
+            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+            color: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 25px rgba(30, 27, 75, 0.25);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .id-card-preview::before {
+            content: '';
+            position: absolute;
+            top: -50px; right: -50px;
+            width: 140px; height: 140px;
+            background: rgba(99, 102, 241, 0.2);
+            border-radius: 50%;
+        }
+
+        .id-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            padding-bottom: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .id-card-header h3 { font-size: 1rem; letter-spacing: 0.5px; color: #c7d2fe; text-transform: uppercase; }
+        .id-card-header span { font-size: 0.75rem; background: var(--brand-violet); padding: 0.2rem 0.6rem; border-radius: 12px; font-weight: 600; }
+
+        .id-card-body {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .id-card-photo {
+            width: 70px;
+            height: 70px;
+            border-radius: 12px;
+            background: #e0e7ff;
+            color: var(--sidebar-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            border: 2px solid var(--brand-violet);
+            flex-shrink: 0;
+        }
+
+        .id-card-details h4 { font-size: 1.15rem; color: #ffffff; font-weight: 700; margin-bottom: 0.2rem; }
+        .id-card-details p { font-size: 0.85rem; color: #a5b4fc; margin-bottom: 0.15rem; }
+
+        /* Table Styling */
+        .table-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.25rem;
+        }
+
+        .table-header h2 { font-size: 1.2rem; font-weight: 700; }
+
+        .badge {
+            background: var(--brand-light);
+            color: var(--brand-violet);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th, td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.9rem;
+        }
+
+        th {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            background: #f8fafc;
+        }
+
+        .status-badge {
+            padding: 0.3rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .status-present { background: var(--success-bg); color: var(--success-color); }
+        .status-absent { background: var(--danger-bg); color: var(--danger-color); }
+        .status-late { background: var(--warning-bg); color: var(--warning-color); }
+
+        .action-btn {
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            padding: 0.4rem;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            border-radius: 4px;
+            transition: color 0.2s;
+        }
+        .action-btn.edit:hover { color: var(--brand-violet); }
+        .action-btn.delete:hover { color: var(--danger-color); }
+
+        /* Progress Bar Breakdown */
+        .dept-progress-item {
+            margin-bottom: 1.2rem;
+        }
+
+        .dept-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.88rem;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+        }
+
+        .progress-bar-bg {
+            background: #e2e8f0;
+            height: 10px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: var(--brand-violet);
+            border-radius: 10px;
+            transition: width 0.4s ease;
+        }
+
+        /* Modal Popup */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0; top: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: var(--bg-card);
+            padding: 2rem;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .close-btn {
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-muted);
+        }
+        .close-btn:hover { color: var(--text-color); }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .form-group label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-color);
+        }
+
+        .form-control {
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            outline: none;
+            font-size: 0.95rem;
+            transition: border-color 0.2s;
+        }
+        .form-control:focus { border-color: var(--brand-violet); box-shadow: 0 0 0 3px var(--brand-light); }
+
+        /* Notification Toast */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #1e1b4b;
+            color: white;
+            padding: 0.9rem 1.4rem;
+            border-radius: 10px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            z-index: 2000;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast i { color: #818cf8; font-size: 1.2rem; }
+
+        @media (max-width: 768px) {
+            .app-container { flex-direction: column; }
+            .sidebar { width: 100%; }
+            .top-header { padding: 1rem; }
+            .tab-content { padding: 1rem; }
+            .search-box { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="brand">
+                <i class="fa-solid fa-id-card-clip"></i>
+                <div class="brand-text">
+                    <h2>EduTrack</h2>
+                    <p>SAU Attendance Portal</p>
+                </div>
+            </div>
+            <nav class="nav-menu">
+                <a href="#" class="nav-item active" onclick="switchTab(event, 'dashboard-sec')"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+                <a href="#" class="nav-item" onclick="switchTab(event, 'records-sec')"><i class="fa-solid fa-clipboard-user"></i> Attendance Records</a>
+                <a href="#" class="nav-item" onclick="switchTab(event, 'directory-sec')"><i class="fa-solid fa-address-book"></i> Student Directory</a>
+                <a href="#" class="nav-item" onclick="switchTab(event, 'settings-sec')"><i class="fa-solid fa-sliders"></i> Settings</a>
+            </nav>
+            <div class="sidebar-footer">
+                <p>Designed by Faraz Hussain</p>
+                <p style="font-size:0.7rem; color:#a5b4fc; margin-top:0.2rem;">Web Tech Final Project</p>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header Bar -->
+            <header class="top-header">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass" style="color:var(--text-muted)"></i>
+                    <input type="text" id="searchInput" onkeyup="filterStudents()" placeholder="Search by Student Name or ID Card #...">
+                </div>
+                <div class="user-profile">
+                    <i class="fa-regular fa-bell icon" style="cursor:pointer; color:var(--text-muted); font-size:1.1rem" onclick="showToast('No new system notifications.')"></i>
+                    <div class="avatar-container">
+                        <div class="avatar">F</div>
+                        <div class="user-info">
+                            <span class="user-name">Faraz Hussain</span>
+                            <span class="user-role">System Admin / Instructor</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Content Section -->
+            <section id="dashboard-sec" class="tab-content active-tab">
+                <div class="page-title">
+                    <h1>Attendance Dashboard</h1>
+                    <button class="btn btn-primary" onclick="openModal()"><i class="fa-solid fa-plus"></i> Mark Attendance</button>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon bg-indigo"><i class="fa-solid fa-users"></i></div>
+                        <div class="stat-info">
+                            <h3 id="statTotal">4</h3>
+                            <p>Enrolled Students</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon bg-emerald"><i class="fa-solid fa-user-check"></i></div>
+                        <div class="stat-info">
+                            <h3 id="statPresent">3</h3>
+                            <p>Present Today</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon bg-rose"><i class="fa-solid fa-user-xmark"></i></div>
+                        <div class="stat-info">
+                            <h3 id="statAbsent">1</h3>
+                            <p>Absent Today</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon bg-amber"><i class="fa-solid fa-chart-line"></i></div>
+                        <div class="stat-info">
+                            <h3 id="statRate">75%</h3>
+                            <p>Attendance Rate</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dashboard Grid (Table + Live ID Card Preview) -->
+                <div class="dashboard-grid">
+                    <!-- Dynamic Attendance Table Card -->
+                    <div class="table-card">
+                        <div class="table-header">
+                            <h2>Live Attendance Feed</h2>
+                            <span class="badge">Today's Session</span>
+                        </div>
+                        <div class="table-responsive">
+                            <table id="dashboardTable">
+                                <thead>
+                                    <tr>
+                                        <th>ID Card #</th>
+                                        <th>Student Name</th>
+                                        <th>Department</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Dynamic Rows Rendered Here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Side Card: Active ID Preview & Dept Summary -->
+                    <div style="display:flex; flex-direction:column; gap:1.5rem;">
+                        <!-- ID Card Preview Component -->
+                        <div class="id-card-preview">
+                            <div class="id-card-header">
+                                <h3>Shaikh Ayaz University</h3>
+                                <span>VERIFIED ID</span>
+                            </div>
+                            <div class="id-card-body">
+                                <div class="id-card-photo">
+                                    <i class="fa-solid fa-user"></i>
+                                </div>
+                                <div class="id-card-details">
+                                    <h4 id="previewName">Faraz Hussain</h4>
+                                    <p id="previewId"><i class="fa-solid fa-hashtag"></i> SAU-2026-AI-001</p>
+                                    <p id="previewDept"><i class="fa-solid fa-graduation-cap"></i> Artificial Intelligence</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Department Breakdown Progress Card -->
+                        <div class="table-card">
+                            <h3 style="font-size:1.1rem; font-weight:700; margin-bottom:1.2rem;">Department Ratio</h3>
+                            
+                            <div class="dept-progress-item">
+                                <div class="dept-info">
+                                    <span>Artificial Intelligence</span>
+                                    <span id="aiRatioText">100%</span>
+                                </div>
+                                <div class="progress-bar-bg">
+                                    <div class="progress-bar-fill" id="aiBar" style="width: 100%;"></div>
+                                </div>
+                            </div>
+
+                            <div class="dept-progress-item">
+                                <div class="dept-info">
+                                    <span>Computer Science</span>
+                                    <span id="csRatioText">50%</span>
+                                </div>
+                                <div class="progress-bar-bg">
+                                    <div class="progress-bar-fill" id="csBar" style="width: 50%;"></div>
+                                </div>
+                            </div>
+
+                            <div class="dept-progress-item">
+                                <div class="dept-info">
+                                    <span>Software Engineering</span>
+                                    <span id="seRatioText">100%</span>
+                                </div>
+                                <div class="progress-bar-bg">
+                                    <div class="progress-bar-fill" id="seBar" style="width: 100%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Detailed Attendance Records Section -->
+            <section id="records-sec" class="tab-content">
+                <div class="page-title">
+                    <h1>Complete Attendance Records</h1>
+                    <button class="btn btn-primary" onclick="openModal()"><i class="fa-solid fa-plus"></i> New Entry</button>
+                </div>
+
+                <div class="table-card">
+                    <div class="table-responsive">
+                        <table id="recordsTable">
+                            <thead>
+                                <tr>
+                                    <th>ID Card Number</th>
+                                    <th>Student Name</th>
+                                    <th>Department</th>
+                                    <th>Date & Time</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Rendered dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Student Directory Section -->
+            <section id="directory-sec" class="tab-content">
+                <div class="page-title">
+                    <h1>Student Directory & ID Roster</h1>
+                </div>
+
+                <div class="table-card">
+                    <p style="color:var(--text-muted); margin-bottom:1.25rem;">Roster of all registered students with verified ID cards.</p>
+                    <div class="table-responsive">
+                        <table id="directoryTable">
+                            <thead>
+                                <tr>
+                                    <th>ID Card #</th>
+                                    <th>Student Name</th>
+                                    <th>Department</th>
+                                    <th>Enrolled Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Rendered dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Settings Section -->
+            <section id="settings-sec" class="tab-content">
+                <div class="page-title">
+                    <h1>System Settings & Instructor Profile</h1>
+                </div>
+
+                <div class="table-card" style="max-width:550px;">
+                    <h3 style="font-size:1.1rem; font-weight:700; margin-bottom:1rem;">Instructor Information</h3>
+                    <form onsubmit="saveSettings(event)">
+                        <div class="form-group">
+                            <label>Instructor Name</label>
+                            <input type="text" id="settingName" value="Faraz Hussain" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Department / Designation</label>
+                            <input type="text" value="Assistant Professor - Computer Science" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>University Email</label>
+                            <input type="email" value="faraz.hussain@sau.edu.pk" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="margin-top:0.5rem;">Save Settings</button>
+                    </form>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Mark Attendance Modal Form -->
+    <div id="attendanceModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 style="font-size:1.3rem; font-weight:700;">Mark Student Attendance</h2>
+                <span class="close-btn" onclick="closeModal()">&times;</span>
+            </div>
+            <form id="attendanceForm" onsubmit="addAttendanceRecord(event)">
+                <div class="form-group">
+                    <label>Student Full Name</label>
+                    <input type="text" id="inputName" required placeholder="e.g., Shahzaib Raza" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>Roll / ID Card Number</label>
+                    <input type="text" id="inputId" required placeholder="e.g., SAU-2026-CS-042" class="form-control" oninput="updateCardPreview()">
+                </div>
+                <div class="form-group">
+                    <label>Department</label>
+                    <select id="inputDept" class="form-control">
+                        <option value="Artificial Intelligence">Artificial Intelligence</option>
+                        <option value="Computer Science">Computer Science</option>
+                        <option value="Software Engineering">Software Engineering</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Attendance Status</label>
+                    <select id="inputStatus" class="form-control">
+                        <option value="Present">Present</option>
+                        <option value="Absent">Absent</option>
+                        <option value="Late">Late</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width:100%; margin-top:1rem; justify-content:center;">
+                    <i class="fa-solid fa-check-double"></i> Save Record
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification Element -->
+    <div id="toast" class="toast">
+        <i class="fa-solid fa-circle-info"></i>
+        <span id="toastMsg">Action completed successfully.</span>
+    </div>
+
+    <script>
+        // Initial Student Attendance Dataset
+        let studentRecords = [
+            { id: "SAU-2026-AI-001", name: "Faraz Hussain", dept: "Artificial Intelligence", status: "Present", timestamp: "2026-11-07 | 09:00 AM" },
+            { id: "SAU-2026-CS-014", name: "Shahzaib Raza", dept: "Computer Science", status: "Present", timestamp: "2026-11-07 | 09:05 AM" },
+            { id: "SAU-2026-SE-029", name: "Muhammad Ilyas", dept: "Software Engineering", status: "Present", timestamp: "2026-11-07 | 09:12 AM" },
+            { id: "SAU-2026-CS-055", name: "Ali Ahmed", dept: "Computer Science", status: "Absent", timestamp: "2026-11-07 | --:--" }
+        ];
+
+        window.onload = function() {
+            renderAllTables();
+            calculateStats();
+        };
+
+        // Render Tables Dynamically
+        function renderAllTables() {
+            const dashTbody = document.getElementById('dashboardTable').querySelector('tbody');
+            const recTbody = document.getElementById('recordsTable').querySelector('tbody');
+            const dirTbody = document.getElementById('directoryTable').querySelector('tbody');
+
+            dashTbody.innerHTML = '';
+            recTbody.innerHTML = '';
+            dirTbody.innerHTML = '';
+
+            studentRecords.forEach((item, index) => {
+                const statusClass = item.status === 'Present' ? 'status-present' : (item.status === 'Absent' ? 'status-absent' : 'status-late');
+                const statusIcon = item.status === 'Present' ? 'fa-circle-check' : (item.status === 'Absent' ? 'fa-circle-xmark' : 'fa-clock');
+
+                // Dashboard Table Row
+                dashTbody.innerHTML += `
+                    <tr onclick="setCardPreview('${item.name}', '${item.id}', '${item.dept}')" style="cursor:pointer;" title="Click to view ID Card">
+                        <td><strong>${item.id}</strong></td>
+                        <td>${item.name}</td>
+                        <td>${item.dept}</td>
+                        <td><span class="status-badge ${statusClass}"><i class="fa-solid ${statusIcon}"></i> ${item.status}</span></td>
+                        <td>
+                            <button class="action-btn delete" onclick="deleteRecord(event, ${index})" title="Delete"><i class="fa-solid fa-trash-can"></i></button>
+                        </td>
+                    </tr>
+                `;
+
+                // Records Table Row
+                recTbody.innerHTML += `
+                    <tr>
+                        <td><strong>${item.id}</strong></td>
+                        <td>${item.name}</td>
+                        <td>${item.dept}</td>
+                        <td>${item.timestamp}</td>
+                        <td><span class="status-badge ${statusClass}"><i class="fa-solid ${statusIcon}"></i> ${item.status}</span></td>
+                        <td>
+                            <button class="action-btn delete" onclick="deleteRecord(event, ${index})" title="Delete"><i class="fa-solid fa-trash-can"></i></button>
+                        </td>
+                    </tr>
+                `;
+
+                // Student Directory Row
+                dirTbody.innerHTML += `
+                    <tr>
+                        <td><strong>${item.id}</strong></td>
+                        <td>${item.name}</td>
+                        <td>${item.dept}</td>
+                        <td><span class="badge">Active Student</span></td>
+                    </tr>
+                `;
+            });
+        }
+
+        // Calculate and Update Real-time Statistics
+        function calculateStats() {
+            const total = studentRecords.length;
+            const present = studentRecords.filter(r => r.status === 'Present' || r.status === 'Late').length;
+            const absent = studentRecords.filter(r => r.status === 'Absent').length;
+            const rate = total > 0 ? Math.round((present / total) * 100) : 0;
+
+            document.getElementById('statTotal').innerText = total;
+            document.getElementById('statPresent').innerText = present;
+            document.getElementById('statAbsent').innerText = absent;
+            document.getElementById('statRate').innerText = `${rate}%`;
+
+            // Update Department Breakdown Bars
+            updateDepartmentProgress('Artificial Intelligence', 'aiBar', 'aiRatioText');
+            updateDepartmentProgress('Computer Science', 'csBar', 'csRatioText');
+            updateDepartmentProgress('Software Engineering', 'seBar', 'seRatioText');
+        }
+
+        function updateDepartmentProgress(deptName, barId, textId) {
+            const deptRecords = studentRecords.filter(r => r.dept === deptName);
+            const presentCount = deptRecords.filter(r => r.status === 'Present' || r.status === 'Late').length;
+            const ratio = deptRecords.length > 0 ? Math.round((presentCount / deptRecords.length) * 100) : 0;
+
+            document.getElementById(barId).style.width = `${ratio}%`;
+            document.getElementById(textId).innerText = `${ratio}%`;
+        }
+
+        // Live ID Card Preview Handler
+        function setCardPreview(name, id, dept) {
+            document.getElementById('previewName').innerText = name;
+            document.getElementById('previewId').innerHTML = `<i class="fa-solid fa-hashtag"></i> ${id}`;
+            document.getElementById('previewDept').innerHTML = `<i class="fa-solid fa-graduation-cap"></i> ${dept}`;
+        }
+
+        function updateCardPreview() {
+            const idVal = document.getElementById('inputId').value;
+            const nameVal = document.getElementById('inputName').value;
+            const deptVal = document.getElementById('inputDept').value;
+
+            if (nameVal) document.getElementById('previewName').innerText = nameVal;
+            if (idVal) document.getElementById('previewId').innerHTML = `<i class="fa-solid fa-hashtag"></i> ${idVal}`;
+            if (deptVal) document.getElementById('previewDept').innerHTML = `<i class="fa-solid fa-graduation-cap"></i> ${deptVal}`;
+        }
+
+        // Tab Switching Functionality
+        function switchTab(event, targetId) {
+            if (event) event.preventDefault();
+            
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => content.classList.remove('active-tab'));
+
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => item.classList.remove('active'));
+
+            document.getElementById(targetId).classList.add('active-tab');
+
+            const matchingNav = Array.from(navItems).find(i => i.getAttribute('onclick')?.includes(targetId));
+            if (matchingNav) matchingNav.classList.add('active');
+        }
+
+        // Live Search Filter Functionality
+        function filterStudents() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const rows = document.getElementById('dashboardTable').querySelectorAll('tbody tr');
+
+            rows.forEach(row => {
+                const text = row.innerText.toLowerCase();
+                if (text.includes(query)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        // Add Attendance Record Handler
+        function addAttendanceRecord(event) {
+            event.preventDefault();
+
+            const name = document.getElementById('inputName').value;
+            const id = document.getElementById('inputId').value;
+            const dept = document.getElementById('inputDept').value;
+            const status = document.getElementById('inputStatus').value;
+
+            const now = new Date();
+            const timeStr = `${now.toISOString().split('T')[0]} | ${now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+
+            studentRecords.unshift({
+                id: id,
+                name: name,
+                dept: dept,
+                status: status,
+                timestamp: timeStr
+            });
+
+            renderAllTables();
+            calculateStats();
+            setCardPreview(name, id, dept);
+            closeModal();
+            document.getElementById('attendanceForm').reset();
+            showToast(`Attendance recorded for ${name}!`);
+        }
+
+        // Delete Attendance Record
+        function deleteRecord(event, index) {
+            event.stopPropagation();
+            if (confirm("Are you sure you want to delete this attendance record?")) {
+                studentRecords.splice(index, 1);
+                renderAllTables();
+                calculateStats();
+                showToast("Record removed successfully.");
+            }
+        }
+
+        // Modal Controls
+        function openModal() {
+            document.getElementById('attendanceModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('attendanceModal').style.display = 'none';
+        }
+
+        // Toast Notification Trigger
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMsg').innerText = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Settings Form Handler
+        function saveSettings(event) {
+            event.preventDefault();
+            const newName = document.getElementById('settingName').value;
+            document.querySelector('.user-name').innerText = newName;
+            document.querySelector('.avatar').innerText = newName.charAt(0).toUpperCase();
+            showToast('Instructor profile settings updated!');
+        }
+    </script>
+</body>
+</html>
